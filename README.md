@@ -1,4 +1,4 @@
-# Pulse — Real-time Analytics Dashboard
+# Pulse - Real-time Analytics Dashboard
 
 A real-time analytics dashboard: **FastAPI WebSockets** stream live events to
 a **React/Recharts** frontend, backed by **PostgreSQL** window-function
@@ -7,7 +7,7 @@ pub/sub is wired in as an optional layer for scaling the WebSocket fan-out
 across multiple backend instances.
 
 Comes preloaded with a realistic fake-data generator, so it's fully
-interactive out of the box — no real event source required.
+interactive out of the box - no real event source required.
 
 ## Architecture
 
@@ -28,19 +28,19 @@ interactive out of the box — no real event source required.
 └─────────────┘
 ```
 
-- **`events`** — append-only raw fact table. Every page view, click,
+- **`events`** - append-only raw fact table. Every page view, click,
   signup, add-to-cart, and purchase lands here.
-- **`hourly_event_stats`** — a materialized view that pre-aggregates
+- **`hourly_event_stats`** - a materialized view that pre-aggregates
   `events` into hourly buckets by event type / page / country / device.
   Refreshed on a timer (`REFRESH MATERIALIZED VIEW CONCURRENTLY`) so trend
   and top-N queries stay fast without ever re-scanning the raw table.
-- **Trend endpoint** uses a real SQL window function — a trailing 6-bucket
+- **Trend endpoint** uses a real SQL window function - a trailing 6-bucket
   `AVG(...) OVER (ORDER BY bucket ROWS BETWEEN 6 PRECEDING AND CURRENT ROW)`
-  — to compute the moving-average line, not something faked in Python.
+  - to compute the moving-average line, not something faked in Python.
 - **WebSocket manager** broadcasts directly to connected clients by
   default. Set `REDIS_URL` and it switches to publishing on a Redis
   channel instead, with every backend replica subscribing and forwarding
-  to its own local clients — the standard pattern for running this behind
+  to its own local clients - the standard pattern for running this behind
   a load balancer.
 
 ## Prerequisites
@@ -79,7 +79,7 @@ Backend API docs (Swagger) at **http://localhost:8000/docs**.
    cp .env.example .env   # edit DATABASE_URL / REDIS_URL if needed
    uvicorn app.main:app --reload
    ```
-   First run seeds historical data automatically — this can take 15–30s
+   First run seeds historical data automatically - this can take 15–30s
    for the default 30 days × 3,000 events/day. To reseed later without
    restarting the app:
    ```bash
@@ -101,7 +101,7 @@ Backend API docs (Swagger) at **http://localhost:8000/docs**.
 | `GET /api/metrics/summary` | Events today, active users (5m), revenue today, events/min (1h avg) |
 | `GET /api/metrics/trends?start=&end=&event_type=&country=&device=` | Hourly time series with moving average |
 | `GET /api/metrics/top?dimension=page\|country\|device&limit=` | Top-N breakdown for a dimension |
-| `WS /ws/live` | Live event stream — `{"type": "event", "data": {...}}` per message |
+| `WS /ws/live` | Live event stream - `{"type": "event", "data": {...}}` per message |
 
 ## Project structure
 
@@ -144,7 +144,7 @@ docker-compose.yml
 ## Notes
 
 - All values in the fake-data generator (event mix, revenue, traffic
-  curve) live in `backend/app/services/fake_data.py` — swap it out for a
+  curve) live in `backend/app/services/fake_data.py` - swap it out for a
   real event ingestion path (e.g. a Kafka consumer) without touching
   anything else; the rest of the app only depends on rows existing in
   `events`.
